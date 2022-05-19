@@ -4,27 +4,15 @@ using UnityEngine;
 
 public class CreatePolygone : MonoBehaviour
 {
-
-    public int lines;
-    public float radius;
-
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            GetPolygon(lines, radius, transform.position);
-        }
-    }
-
-    List<Vector2> GetPolygon(int lines, float radius, Vector2 pivot)
+    public List<Vector2> GetPolygon(int lines, float radius, Vector2 pivot)
     {
         List<Vector2> points = new List<Vector2>();
         Vector2 circle = new Vector2(0, radius);
         for (int i = 0; i < lines; i++) 
         {
             points.Add(circle + pivot);
-            circle = rotate(circle, Mathf.Deg2Rad * 360 / lines);
-            Debug.DrawLine(circle + pivot, points[points.Count - 1] + pivot, Color.green, 20, false);
+            circle = rotate(circle, Mathf.Deg2Rad * -360 / lines);
+            Debug.DrawLine(circle + pivot, points[points.Count - 1], Color.green, 20, false);
         }
 
         return points;
