@@ -8,32 +8,32 @@ using System.Linq;
 
 public class TerainDestroying : MonoBehaviour
 {
-    public int lines;
-    public float radius;
-    CreatePolygone createPolygone;
     public PolygonCollider2D spirteShapeController;
-    public int at;
+    private int at;
     public LayerMask raycastMask;
+    public VisualDestruction visualDestruction;
 
     void Start()
     {
-        Debug.Log(Inline(new Vector2(2,1), new Vector2(2, 5), new Vector2(2,0)));
-        createPolygone = gameObject.GetComponent<CreatePolygone>();
+        //Debug.Log(Inline(new Vector2(2,1), new Vector2(2, 5), new Vector2(2,0)));
+        //createPolygone = gameObject.GetComponent<CreatePolygone>();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        /*if (Input.GetKeyDown(KeyCode.P))
         {
-            CalculateDestruction(createPolygone.GetPolygon(lines, radius, transform.position), spirteShapeController);
+            Polygon polygon = createPolygone.GetPolygon(lines, radius, transform.position);
+            CalculateDestruction(polygon.corners, spirteShapeController);
+            visualDestruction.CreateVisalDestruction(polygon);
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
-        }
+        }*/
     }
 
 
-    void CalculateDestruction(List<Vector2> polygon, PolygonCollider2D terrain)
+    public void CalculateDestruction(List<Vector2> polygon, PolygonCollider2D terrain, float radius)
     {
         List<Vector2> currentPath = terrain.points.ToList();
         List<bool> isInside = new List<bool>();
@@ -62,6 +62,7 @@ public class TerainDestroying : MonoBehaviour
         //finding first and last
         for (int i = 0; i < polygon.Count; i++)
         {
+            
             int nextID = (i != polygon.Count - 1) ? i + 1 : 0;
             int previousID = (i != 0) ? i - 1 : polygon.Count - 1;
             if (!isInside[i] && isInside[previousID])
@@ -78,12 +79,10 @@ public class TerainDestroying : MonoBehaviour
 
         //raycasting to find points where hole starts and ends
         RaycastHit2D hit2 = Physics2D.Raycast(polygon[lastID], -(polygon[lastID] - polygon[nextToLastID]).normalized, radius * 10, raycastMask);
-        Debug.Log("Next hit at: " + hit2.point);
         Debug.DrawLine(polygon[lastID], hit2.point, Color.red, 20, false);
         Vector2 firstPos = ConvertToColliderPos(hit2.point, terrain);
 
         RaycastHit2D hit = Physics2D.Raycast(polygon[firstID], -(polygon[firstID] - polygon[nextToFirstID]).normalized, radius * 10, raycastMask);
-        Debug.Log("Before hit at: " + hit.point);
         Debug.DrawLine(polygon[firstID], hit.point, Color.blue, 20, false);
         Vector2 lastPos = ConvertToColliderPos(hit.point, terrain);
 
@@ -98,12 +97,12 @@ public class TerainDestroying : MonoBehaviour
             int nextID = (i != currentPath.Count - 1) ? i + 1 : 0;
             if (Inline(firstPos, currentPath[i], currentPath[nextID]))
             {
-                Debug.Log("First point is between: " + currentPath[i] + " and " + currentPath[nextID]);
+                //Debug.Log("First point is between: " + currentPath[i] + " and " + currentPath[nextID]);
                 firstCollision = nextID;
             }
             if (Inline(lastPos, currentPath[i], currentPath[nextID]))
             {
-                Debug.Log("Last point is between: " + currentPath[i] + " and " + currentPath[nextID]);
+                //Debug.Log("Last point is between: " + currentPath[i] + " and " + currentPath[nextID]);
                 lastCollision = nextID;
             }
         }
@@ -113,7 +112,15 @@ public class TerainDestroying : MonoBehaviour
         {
             at = firstCollision;
         }
-        
+        else
+        {
+            Debug.Log("to skomplikowane: first: " + firstCollision + " last: " + lastCollision);
+            for(int i = Mathf.Min(firstCollision, lastCollision); i < Mathf.Max(firstCollision, lastCollision); i++)
+            {
+                currentPath.RemoveAt(Mathf.Min(firstCollision, lastCollision));
+            }
+            at = Mathf.Min(firstCollision, lastCollision);
+        }
 
         //adding corners to path
         currentPath.Insert(at, firstPos);
@@ -122,11 +129,10 @@ public class TerainDestroying : MonoBehaviour
         {
             if (isInside[i]) {
                 currentPath.Insert(at, ConvertToColliderPos(polygon[i], terrain));
-                Debug.Log("In point: " + (polygon[i]));
             }
         }
 
-        
+
         currentPath.Insert(at, lastPos);
 
         terrain.SetPath(0, currentPath);
@@ -150,7 +156,7 @@ public class TerainDestroying : MonoBehaviour
             float a = (firstBound.y - secondBound.y) / (firstBound.x - secondBound.x);
             float b = firstBound.y - a * firstBound.x;
 
-            //Debug.Log("y = " + a + "x +" + b);
+           //Debug.Log("y = " + a + "x +" + b);
 
             diff = tested.y - a * tested.x - b;
         }
