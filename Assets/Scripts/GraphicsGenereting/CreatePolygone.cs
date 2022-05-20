@@ -11,7 +11,7 @@ public class CreatePolygone : MonoBehaviour
         for (int i = 0; i < lines; i++) 
         {
             points.Add(circle + pivot);
-            circle = rotate(circle, Mathf.Deg2Rad * -360 / lines);
+            circle = rotate(circle, Mathf.Deg2Rad * 360 / lines);
             Debug.DrawLine(circle + pivot, points[points.Count - 1], Color.green, 20, false);
         }
 
