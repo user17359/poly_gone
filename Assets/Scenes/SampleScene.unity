@@ -273,7 +273,7 @@ MonoBehaviour:
   cutout: {fileID: 8692623059601296063, guid: cebbfa354f5abc8409c8cce00ea958d9, type: 3}
   lineSlider: {fileID: 449038493}
   radiusSlider: {fileID: 1674484134}
-  camera: {fileID: 0}
+  camera: {fileID: 2023513662}
 --- !u!1 &16097604
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,7 +523,7 @@ GameObject:
   - component: {fileID: 331460520}
   m_Layer: 6
   m_Name: Terrain
-  m_TagString: Untagged
+  m_TagString: Destructable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1150,10 +1150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a880b7ad054cf8d45a56a2b343dd1f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lines: 3
-  radius: 2
   spirteShapeController: {fileID: 331460520}
-  at: 2
   raycastMask:
     serializedVersion: 2
     m_Bits: 64
